@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
@@ -16,6 +16,11 @@ moment = Moment(app)
 class LoginForm(FlaskForm):
     email = StringField('Usuário ou E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Informe a sua senha', validators=[DataRequired()])
+    disciplina = SelectField('Informe a sua disciplina', 
+                             choices=[('DSWA5', 'DSWA5'), 
+                                      ('DWBA4', 'DWBA4'), 
+                                      ('Gestão de Projetos', 'Gestão de Projetos')],
+                             validators=[DataRequired()])
     submit = SubmitField('Enviar')
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,10 +30,11 @@ def index():
     if form.validate_on_submit():
         # Simulando login com um e-mail específico
         session['email'] = form.email.data
+        session['disciplina'] = form.disciplina.data  # Armazenando a disciplina selecionada
         flash(f'Bem-vindo, {session["email"]}!')
         return redirect(url_for('index'))
     
-    return render_template('index.html', form=form, email=session.get('email'))
+    return render_template('index.html', form=form, email=session.get('email'), disciplina=session.get('disciplina'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

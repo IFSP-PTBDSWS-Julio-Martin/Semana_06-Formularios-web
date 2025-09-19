@@ -18,11 +18,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Flasky</a>
+            <!-- O texto no cabeçalho da página -->
+            <a class="navbar-brand" href="/">Avaliação contínua: Aula 050.B</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
+                {% if not session.get('email') %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                {% else %}
+                    <li><a href="#">Bem-vindo, {{ session.get('email') }}</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

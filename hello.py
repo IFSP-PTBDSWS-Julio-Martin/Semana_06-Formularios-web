@@ -31,7 +31,7 @@ class HomeForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-     current_time = datetime.utcnow()
+    current_time = datetime.utcnow()
     form = HomeForm()
     ip_address = request.remote_addr
     host = request.host
@@ -57,7 +57,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
- current_time = datetime.utcnow()
+    current_time = datetime.utcnow()
     form = LoginForm()
     if form.validate_on_submit():
         session['email'] = form.email.data

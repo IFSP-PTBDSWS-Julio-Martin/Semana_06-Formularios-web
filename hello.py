@@ -4,12 +4,8 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
-
-class NameForm(FlaskForm):
-    name = StringField('What is your name?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'  # Necessário para forms e flash
@@ -17,17 +13,34 @@ app.config['SECRET_KEY'] = 'hard to guess string'  # Necessário para forms e fl
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
+class LoginForm(FlaskForm):
+    email = StringField('Usuário ou E-mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Informe a sua senha', validators=[DataRequired()])
+    submit = SubmitField('Enviar')
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     name = None
-    form = NameForm()
+    form = LoginForm()
     if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('Looks like you have changed your name!')
-        session['name'] = form.name.data
+        # Simulando login com um e-mail específico
+        session['email'] = form.email.data
+        flash(f'Bem-vindo, {session["email"]}!')
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+    
+    return render_template('index.html', form=form, email=session.get('email'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        session['email'] = form.email.data
+        flash(f'Você entrou com sucesso como {session["email"]}!')
+        return redirect(url_for('index'))
+    return render_template('login.html', form=form)
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 @app.route('/user/<nome>')
 def user(nome):

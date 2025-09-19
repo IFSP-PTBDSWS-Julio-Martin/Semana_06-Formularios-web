@@ -31,6 +31,7 @@ class HomeForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+     current_time = datetime.utcnow()
     form = HomeForm()
     ip_address = request.remote_addr
     host = request.host
@@ -50,17 +51,19 @@ def index():
         instituicao=session.get('instituicao'),
         disciplina=session.get('disciplina'),
         ip_address=ip_address,
-        host=host
+        host=host,
+        current_time=current_time
     )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+ current_time = datetime.utcnow()
     form = LoginForm()
     if form.validate_on_submit():
         session['email'] = form.email.data
         flash(f'Você entrou com sucesso como {session["email"]}!')
         return redirect(url_for('index'))
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, current_time=current_time)
 
 @app.route('/user/<nome>')
 def user(nome):

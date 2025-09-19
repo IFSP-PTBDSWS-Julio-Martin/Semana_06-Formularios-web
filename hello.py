@@ -16,6 +16,12 @@ moment = Moment(app)
 class LoginForm(FlaskForm):
     email = StringField('Usuário ou E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Informe a sua senha', validators=[DataRequired()])
+    submit = SubmitField('Enviar')
+
+class HomeForm(FlaskForm):
+    nome = StringField('Informe o seu nome', validators=[DataRequired()])
+    sobrenome = StringField('Informe o seu sobrenome', validators=[DataRequired()])
+    instituicao = StringField('Informe a sua Instituição de ensino', validators=[DataRequired()])
     disciplina = SelectField('Informe a sua disciplina',
                              choices=[('DSWA5', 'DSWA5'),
                                       ('DWBA4', 'DWBA4'),
@@ -25,26 +31,30 @@ class LoginForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = LoginForm()
+    form = HomeForm()
     ip_address = request.remote_addr
     host = request.host
 
     if form.validate_on_submit():
-        session['email'] = form.email.data
+        session['nome'] = form.nome.data
+        session['sobrenome'] = form.sobrenome.data
+        session['instituicao'] = form.instituicao.data
         session['disciplina'] = form.disciplina.data
-        session['institution'] = "Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP"
-        flash(f'Bem-vindo, {session["email"]}!')
         return redirect(url_for('index'))
 
     return render_template(
         'index.html',
         form=form,
-        email=session.get('email'),
+        nome=session.get('nome'),
+        sobrenome=session.get('sobrenome'),
+        instituicao=session.get('instituicao'),
         disciplina=session.get('disciplina'),
-        institution=session.get('institution'),
         ip_address=ip_address,
         host=host
     )
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

@@ -5,7 +5,7 @@ from flask_moment import Moment
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
@@ -14,7 +14,7 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 
 class LoginForm(FlaskForm):
-    email = StringField('Usuário ou E-mail', validators=[DataRequired(), Email()])
+    email = StringField('Usuário ou E-mail', validators=[DataRequired()])
     password = PasswordField('Informe a sua senha', validators=[DataRequired()])
     submit = SubmitField('Enviar')
 
@@ -53,9 +53,6 @@ def index():
         host=host
     )
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -65,9 +62,6 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html', form=form)
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 @app.route('/user/<nome>')
 def user(nome):
     return render_template('user.html', nome=nome)
@@ -75,3 +69,6 @@ def user(nome):
 @app.route('/rotainexistente')
 def erro():
     return render_template('404.html')
+
+if __name__ == "__main__":
+    app.run(debug=True)

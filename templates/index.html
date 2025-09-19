@@ -10,7 +10,10 @@
 
 {% if email %}
     <hr>
-    <p>Você está acessando o sistema por meio do usuário <strong>{{ email }}</strong></p>
+    <p>A sua Instituição de ensino é {{ institution if institution else 'None' }}</p>
+    <p>Está cursando a disciplina de {{ disciplina if disciplina else 'None' }}</p>
+    <p>O IP do computador remoto é {{ ip_address if ip_address else 'None' }}</p>
+    <p>O host da aplicação é {{ host if host else 'None' }}</p>
     <p>The local date and time is {{ moment.utcnow().format('MMMM DD, YYYY h:mm A') }}.</p>
     <p>That was a few seconds ago.</p>
 {% else %}

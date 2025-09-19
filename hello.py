@@ -1,5 +1,5 @@
 # A very simple Flask Hello World app for you to get started with...
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, session, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
@@ -8,7 +8,7 @@ from wtforms import StringField, PasswordField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'hard to guess string'  # Necessário para forms e flash
+app.config['SECRET_KEY'] = 'hard to guess string'
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
@@ -16,25 +16,35 @@ moment = Moment(app)
 class LoginForm(FlaskForm):
     email = StringField('Usuário ou E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Informe a sua senha', validators=[DataRequired()])
-    disciplina = SelectField('Informe a sua disciplina', 
-                             choices=[('DSWA5', 'DSWA5'), 
-                                      ('DWBA4', 'DWBA4'), 
+    disciplina = SelectField('Informe a sua disciplina',
+                             choices=[('DSWA5', 'DSWA5'),
+                                      ('DWBA4', 'DWBA4'),
                                       ('Gestão de Projetos', 'Gestão de Projetos')],
                              validators=[DataRequired()])
     submit = SubmitField('Enviar')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    name = None
     form = LoginForm()
+    ip_address = request.remote_addr
+    host = request.host
+
     if form.validate_on_submit():
-        # Simulando login com um e-mail específico
         session['email'] = form.email.data
-        session['disciplina'] = form.disciplina.data  # Armazenando a disciplina selecionada
+        session['disciplina'] = form.disciplina.data
+        session['institution'] = "Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP"
         flash(f'Bem-vindo, {session["email"]}!')
         return redirect(url_for('index'))
-    
-    return render_template('index.html', form=form, email=session.get('email'), disciplina=session.get('disciplina'))
+
+    return render_template(
+        'index.html',
+        form=form,
+        email=session.get('email'),
+        disciplina=session.get('disciplina'),
+        institution=session.get('institution'),
+        ip_address=ip_address,
+        host=host
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
